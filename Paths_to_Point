@@ -1,0 +1,164 @@
+A recent home work in which we used stack to iteratively find all possible paths North and East to a desired point.
+
+import java.util.*;
+import java.awt.*;
+/**
+ * Client code to prompt the user for two positive integers and prints all possible paths to the coordinate
+ */
+public class H10_lucas{
+   //private fields
+   private static int targetX;
+   private static int targetY;
+   /**
+    * Main method for displaying messages to the user and to prompt the user for valid data
+    */
+   public static void main(String[] args){
+      Scanner input = new Scanner(System.in);
+      System.out.println("Please enter x- and y- coordinate of your destination point: ");
+      validateData(input);
+      System.out.println("All unique paths from the origin to your destination are:");   
+
+      ArrayStack<Point> pointStack = new ArrayStack<Point>();
+      findPaths(pointStack);
+   }
+   /**
+    * Using an ArrayStack full of Points we check to see if we've already visited a Point. If we haven't add it to the 
+    * ArrayStack and move on, otherwise mark it as visited and try another point.
+    * @param pointStack The stack of Points that will be checked for all potential paths to our target point
+    */
+   @SuppressWarnings("unchecked")
+   public static void findPaths(ArrayStack pointStack){
+      pointStack.push(new Point());
+      while(!pointStack.isEmpty()){
+         Point currentPoint = (Point)pointStack.pop();
+         //While there are points to check
+         while(!currentPoint.hasBeenChecked()){
+            //If it hasnt been checked, visit that point
+            if(!currentPoint.checked){
+               currentPoint.visit();
+            }
+            //If we have a match, print that points path
+            if(currentPoint.getX() == targetX && currentPoint.getY() == targetY){
+               System.out.println(currentPoint.getPath());
+            } else{ 
+               //Check to see if we can add an X onto the current point
+               if(currentPoint.getX() < targetX){
+                  Point newPoint = new Point(currentPoint.getX() + 1, currentPoint.getY(), currentPoint.getPath() + "E");
+                  pointStack.push(newPoint);
+               }
+               //check to see that we can add a Y onto the current point
+               if(currentPoint.getY() < targetY){
+                  Point newPoint = new Point(currentPoint.getX(), currentPoint.getY() + 1, currentPoint.getPath() + "N");
+                  pointStack.push(newPoint);
+               }
+            } 
+         }        
+      }
+   }
+   /**
+    * Using a scanner, we take in user input and until they input two integers with a space between them continue to ask
+    * for input
+    * @param sC A scanner object for the user input.
+    */
+   public static void validateData(Scanner sC){
+      boolean flag = false;
+      while(!flag){
+         try{
+            targetX = sC.nextInt();
+            targetY = sC.nextInt();
+            flag = true;
+            if(targetX < 0 || targetY < 0){
+               flag = false;
+               System.out.println("Please enter x- and y- coordinate of your distination point: ");
+            }
+         } catch(Exception e){
+            System.out.println("Please enter x- and y- coordinate of your distination point: ");
+            sC.next();
+            flag = false;
+         }  
+      }       
+   }
+   /**
+    * Private class to create a point object so that we can tell if a point has been visited and to keep track of the
+    * x and y values of our current point
+    */
+   private static class Point{
+      private int pointX; 
+      private int pointY;
+      private boolean checked;
+      private String path = "";
+      /**
+       * Create a generic Point with initial starting point at (0,0) and an empty path 
+       */  
+      public Point(){
+         this(0,0, "");
+      }
+      /**
+       * Create a Point that's given an x and y coordinate from the user and a path specified by the user.
+       * @param x The x coordinate
+       * @param y The y coordinate
+       * @param str The string representation of the path of a Point object
+       */
+      public Point(int x,int y, String str){
+         pointX = x; 
+         pointY = y;
+         checked = false;
+         path = str;
+      }
+      /**
+       * A method to set the checked field of a point to true, meaning it has been checked
+       */
+      public void visit(){
+         checked = true;
+      }
+      /**
+       * Boolean method to see if a point has already been checked
+       * @return Boolean - True if the Point has been checked, otherwise false
+       */
+      public boolean hasBeenChecked(){
+         return checked;
+      }
+      /**
+       * Set the path of a Point to the desired path
+       * @param path The path that this Point has taken so far
+       */
+      public void setPath(String path){
+         path += path;
+      }
+      /**
+       * Returns the current path of a Point object
+       * @return String - The path that this Point object has taken so far
+       */ 
+      public String getPath(){
+         return path;
+      }
+      /**
+       * Get the current x coordinate of this Point object
+       * @return Integer - The x coordinate of this Point object
+       */
+      public int getX(){
+         return pointX;
+      }
+      /**
+       * Get the current y coordinate of this Point object
+       * @return Integer - The current y coordinate of this Point object
+       */ 
+      public int getY(){
+         return pointY;
+      }
+      /**
+       * Set the x coordinate for this current Point object
+       * @param x The new x coordinate for this Point object
+       */  
+      public void setX(int x){
+         pointX = x;  
+      }
+      /**
+       * Set the y coordinate for this current Point object
+       * @param y The new y coordinate for this Point object
+       */
+      public void setY(int y){
+         pointY = y;         
+      }   
+   }  
+}
